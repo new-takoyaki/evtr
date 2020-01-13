@@ -1,0 +1,21 @@
+{
+  "name": "evtr",
+  "version": "1.0.0",
+  "description": ".evtx file parser",
+  "main": "index.js",
+  "scripts": {
+    "start": "./node_modules/.bin/ts-node index.ts"
+  },
+  "keywords": ["Typescript", "evtx"],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:gyungdal/evtr.git"
+  },
+  "author": "Gyeongsik Kim",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "ts-node": "^8.6.1",
+    "typescript": "^3.7.4"
+  }
+}
