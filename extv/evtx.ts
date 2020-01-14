@@ -1,3 +1,4 @@
+
 export class FileHeader{
     signature : string;
     firstChuck : bigint; //가장 오래된 chunk
@@ -14,7 +15,7 @@ export class FileHeader{
     
     constructor(){
         this.signature = "ElfFile\x00";
-        this.firstChuck = BigInt(0);
+        this.firstChuck = BigInt(0); 
         this.lastChunkNum = BigInt(0);
         this.nextChunkNum = BigInt(0);
         this.headerLenght = 0;
@@ -25,6 +26,7 @@ export class FileHeader{
         this.unknown = "";
         this.flags = 0;
         this.checkSum = 0;
+
     }
 
     get isDirty(){
@@ -68,13 +70,14 @@ export class ChunkHeader{
     }
 };
 
+const BinaryXML = require('binary-xml');
 export class ChunkRecord{
     signature : string;
     size : number;
     identifier : number;
     writtenTime: Date;
-    //binary XML 파싱 고민
-    event : string;
+    //TODO : binary XML 파싱 필요
+    event : any;
     copyOfSize : number;
 
     constructor(){
@@ -84,6 +87,7 @@ export class ChunkRecord{
         this.writtenTime = new Date();
         this.event = "";
         this.copyOfSize = 0;
+        this.event = new BinaryXML();
     }
 };
 
@@ -97,7 +101,7 @@ export class Chunk {
     }
 };
 
-export class File {
+export class EvtxFile {
     header : FileHeader;
     chunk : Array<Chunk>;
     
