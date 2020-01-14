@@ -1,10 +1,12 @@
-import { open, close, read } from 'fs';
+import { open, close, readSync } from 'fs';
 
-export class FileParser {
+export class FileStream {
     private _readable : boolean;
     private fd : number;
+    private isBigEndian : boolean;
 
-    constructor(path : string){
+    constructor(path : string, isBigEndian = false){
+        this.isBigEndian = isBigEndian;
         this._readable = false;
         this.fd = -1;
         open(path, 'r', (err, fd : number) : void=>{
@@ -21,40 +23,77 @@ export class FileParser {
         return this._readable;
     }
 
-    readInt8(offset : number){
-
+    private readBytes(offset : number, size : number) : Promise<Uint8Array> {
+        if(!this.readable){
+            return Promise.reject("no readable");
+        }else{
+            const buffer = new Uint8Array(size);
+            const readCount = readSync(this.fd, buffer, offset, 1, 0);
+            if(readCount != size){
+                return Promise.reject("fail read data");
+            }else{
+                return Promise.resolve(
+                    !this.isBigEndian 
+                    ? buffer.reverse() 
+                    : buffer
+                );
+            }
+        }
     }
     
-    readInt16(offset : number){
+    async readUInt8(offset : number) : Promise<number> {
+        try{
+            const array = await this.readBytes(offset, 1);
+            return Promise.resolve(array[0]);
+        }catch (error) {
+            return Promise.reject(error);
+        }
+    }
 
+    async readUInt16(offset : number) : Promise<number> {
+        try{
+            const array = await this.readBytes(offset, 2);
+            var result : number = (array[0] << 8);
+            result += array[1];
+            return Promise.resolve(result);
+        }catch (error) {
+            return Promise.reject(error);
+        }
     }
     
-    readInt32(offset : number){
-
+    async readUInt32(offset : number) : Promise<number> {
+        try{
+            const array = await this.readBytes(offset, 4);
+            var result : number = array[0];
+            for(var i = 1;i<array.length;i++){
+                result = result << 8;
+                result += array[i];
+            }
+            return Promise.resolve(result);
+        }catch (error) {
+            return Promise.reject(error);
+        }
     }
 
-    readInt64(offset : number){
-
+    async readUInt64(offset : number) : Promise<bigint> {
+        try{
+            const array = await this.readBytes(offset, 4);
+            var result : bigint = BigInt(array[0]);
+            for(var i = 1;i<array.length;i++){
+                result = result << 8n;
+                result += BigInt(array[i]);
+            }
+            return Promise.resolve(result);
+        }catch (error) {
+            return Promise.reject(error);
+        }
     }
 
-    readUInt8(offset : number){
-
-    }
-    
-    readUInt16(offset : number){
-
-    }
-    
-    readUInt32(offset : number){
-
-    }
-
-    readUInt64(offset : number){
-
-    }
     close(){
-        close(this.fd, ()=>{
-            console.log("File Close");
-        });
+        if(this.readable){
+            close(this.fd, ()=>{
+                console.log("File Close");
+            });
+        }
     }
 }
