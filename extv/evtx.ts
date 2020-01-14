@@ -1,5 +1,6 @@
+import { FileStream } from "./stream";
 
-export class FileHeader{
+export class FileHeader {
     signature : string;
     firstChuck : bigint; //가장 오래된 chunk
     lastChunkNum : bigint; //마지막 chunk
@@ -38,7 +39,7 @@ export class FileHeader{
     }
 };
 
-export class ChunkHeader{
+export class ChunkHeader {
     signature : string;
     firstLogRecordNum : bigint;
     lastLogRecordNum : bigint;
@@ -104,14 +105,18 @@ export class Chunk {
 export class EvtxFile {
     header : FileHeader;
     chunk : Array<Chunk>;
-    
-    constructor(){
+    private stream : FileStream;
+    constructor(path : string){
         this.header = new FileHeader();
         this.chunk = new Array();
+        this.stream = new FileStream(path);
     }
 
-    //임시 함수
-    open() : Boolean {
-        return false;
+    async parse() : Promise<Boolean> {
+        if(!this.stream.readable){
+            return Promise.reject("no readable .evtx file stream");
+        }else{
+            return Promise.resolve(true);
+        }
     }
 };
