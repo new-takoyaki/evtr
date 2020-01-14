@@ -12,9 +12,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:gyungdal/evtr.git"
+    "url": "git@github.com:new-takoyaki/evtr.git"
   },
   "author": "Gyeongsik Kim",
+  "contributors": [
+    "Gyeongsik Kim",
+    "Nene-Tako"
+  ],
   "license": "ISC",
   "dependencies": {
     "@types/node": "^13.1.6",
