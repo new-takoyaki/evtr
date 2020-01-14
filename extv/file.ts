@@ -1,8 +1,9 @@
 export class FileHeader{
-    firstChuck : bigint; //가장 오래된 chuck
-    lastChunkNum : bigint; //현재 작성중인 chuck
-    nextRecordNum : bigint; //현재 작성중인 chuck
-    headerLenght : number; //현재 작성중인 chuck
+    signature : string;
+    firstChuck : bigint; //가장 오래된 chunk
+    lastChunkNum : bigint; //마지막 chunk
+    nextChunkNum : bigint; //다음 작성할 레코드
+    headerLenght : number; //헤더 길이
     minorVersion : number;     
     majorVersion : number; 
     headerSize : number; 
@@ -12,9 +13,10 @@ export class FileHeader{
     checkSum : number; 
     
     constructor(){
+        this.signature = "ElfFile\x00";
         this.firstChuck = BigInt(0);
         this.lastChunkNum = BigInt(0);
-        this.nextRecordNum = BigInt(0);
+        this.nextChunkNum = BigInt(0);
         this.headerLenght = 0;
         this.minorVersion = 0;
         this.majorVersion = 0;
@@ -35,23 +37,54 @@ export class FileHeader{
 };
 
 export class ChunkHeader{
-    magic : string;
+    signature : string;
     firstLogRecordNum : bigint;
     lastLogRecordNum : bigint;
     firstFileRecordNum : bigint;
     lastFileRecordNum : bigint;
-    tablesOffset : number;
+    headerSize : number; 
     lastRecordOffset : number;
-    nextRecordOffset : number;
-    dataCRC : number;
-    unknown : string;
+    freeSpaceOffset : number;
+    recordCRC : number;
+    unknown : string; //68
     headerCRC : number;
-    stringTable : Array<number>;
-    template
+    stringTable : Array<number>; //64
+    templateTable : Array<number>; //32
+
+    constructor(){
+        this.signature = "ElfChnk\x00";
+        this.firstLogRecordNum = BigInt();
+        this.lastLogRecordNum = BigInt();
+        this.firstFileRecordNum = BigInt();
+        this.lastFileRecordNum = BigInt();
+        this.headerSize = 0;
+        this.lastRecordOffset = 0;
+        this.freeSpaceOffset = 0;
+        this.recordCRC = 0;
+        this.unknown = "";
+        this.headerCRC = 0;
+        this.stringTable = new Array(); 
+        this.templateTable = new Array();
+    }
 };
 
 export class ChunkRecord{
+    signature : string;
+    size : number;
+    identifier : number;
+    writtenTime: Date;
+    //binary XML 파싱 고민
+    event : string;
+    copyOfSize : number;
 
+    constructor(){
+        this.signature = "";
+        this.size = 0;
+        this.identifier = 0;
+        this.writtenTime = new Date();
+        this.event = "";
+        this.copyOfSize = 0;
+    }
 };
 
 export class Chunk {
