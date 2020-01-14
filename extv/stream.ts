@@ -28,7 +28,7 @@ export class FileStream {
             return Promise.reject("no readable");
         }else{
             const buffer = new Uint8Array(size);
-            const readCount = readSync(this.fd, buffer, offset, 1, 0);
+            const readCount = readSync(this.fd, buffer, 0, buffer.length, offset);
             if(readCount != size){
                 return Promise.reject("fail read data");
             }else{
@@ -92,6 +92,7 @@ export class FileStream {
     close(){
         if(this.readable){
             close(this.fd, ()=>{
+                this._readable = false;
                 console.log("File Close");
             });
         }
