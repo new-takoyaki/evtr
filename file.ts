@@ -7,12 +7,12 @@ export class File{
         this.path = path;
     }
 
-    parse() : Promise<string>{
-        return new Promise<string>((resolve, reject)=>{
+    parse() : Promise<File>{
+        return new Promise<File>((resolve, reject)=>{
             if(!fs.existsSync(this.path)){
                 reject("File Not Found");
             }else{
-
+                resolve(this);
             }
         });
     }
